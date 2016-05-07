@@ -1,4 +1,6 @@
 # nim-wox
+**Moved to https://github.com/Wox-launcher/LanguageBinding/**
+
 Nim helper library for creating Wox plugin
 
 I'm newbie in Nim :smile:
