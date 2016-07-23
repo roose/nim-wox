@@ -1,0 +1,14 @@
+{
+    "ID": "574f582e4e494d2e544553542e504c55",
+    "ActionKeywords": [
+        "wox.nim.test.plugin"
+    ],
+    "Name": "Wox.nim test plugin",
+    "Description": "Wox.nim test plugin description",
+    "Author": "roose",
+    "Version": "0.1.0",
+    "Language": "executable",
+    "Website": "http://github.com/roose/wox.nim",
+    "IcoPath": "Images\\wox.nim.png",
+    "ExecuteFileName": "wox.exe"
+}
