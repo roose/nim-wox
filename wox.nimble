@@ -1,11 +1,11 @@
 # Package
 
+name          = "wox"
 version       = "0.4.0"
 author        = "roose"
 description   = "Helper library for writing Wox plugins in Nim"
 license       = "MIT"
 srcDir        = "src"
-bin           = @["wox"]
 
 # Dependencies
 
