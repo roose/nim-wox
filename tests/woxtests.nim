@@ -21,6 +21,8 @@ suite "testing wox.nim":
     copyFile(pluginFile, pluginPath)
     var wp = newWox()
 
+    proc test(w: Wox, params: varargs[string]) = discard
+
   teardown:
     removeFile(pluginPath)
 
@@ -89,3 +91,16 @@ suite "testing wox.nim":
       wp.add(item)
     wp.sort("test", minScore = 10)
     check len(wp.data.result) == 7
+
+  test "register proc":
+    wp.register("test", test)
+
+  test "call proc":
+    wp.call("test", "single param")
+    wp.call("test", "params 1", "params 2")
+    wp.call("test", ["array param 1", "array param 2"])
+    wp.call("test", @["seq param 1", "seq param 2"])
+
+  test "run proc":
+    let rpc = """{"method": "test", "parameters": ["test param 1", "test param 2"]}"""
+    wp.run(rpc)
