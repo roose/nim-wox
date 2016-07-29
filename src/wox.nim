@@ -9,41 +9,49 @@
 ##    import browsers
 ##    import wox
 ##
-##    proc query(query: string) =
+##    proc query(wp: Wox, params: varargs[string]) =
 ##      # create a global Wox object
-##      var wp = newWox()
 ##      # add an item to Wox
 ##      wp.add("Github", "How people build software", "Images\\gh.png",
 ##              "openUrl", "https://github.com/", false)
 ##      # send output to Wox
 ##      echo wp.results()
 ##
-##    proc openUrl(url: string) =
+##    proc openUrl(wp: Wox, params: varargs[string]) =
 ##      # open url in default browser
-##      openDefaultBrowser(url)
+##      openDefaultBrowser(params[0])
 ##
 ##    when isMainModule:
+##      var wp = newWox()
 ##      # register `query` and `openUrl` for call from Wox
-##      register("query", query)
-##      register("openUrl", openUrl)
+##      wp.register("query", query)
+##      wp.register("openUrl", openUrl)
 ##      # run called proc
-##      run()
+##      wp.run()
+## .
+##
+## ``Warning:`` settings is JsonNode, on assign new setting value be careful,
+## convert it to JsonNode, Example:
+##
+## .. code-block:: Nim
+##    wp.settings["login"] = "john" # Error, because is string
+##    wp.settings["login"] = newJString("john") # Right
 
 import tables, os, algorithm, strutils, sequtils, sets
 import json, marshal, tables, pegs, times
 
 type
-  PluginInfo = object
+  PluginInfo* = object
     # Plugin.json info object
     id*: string
     name*: string
-    keyword: seq[string]
-    desc: string
-    author: string
-    version: string
-    site: string
-    icon: string
-    file: string
+    keyword*: seq[string]
+    desc*: string
+    author*: string
+    version*: string
+    site*: string
+    icon*: string
+    file*: string
 
   Action = object
     ## Wox JsonRPCAction object
@@ -62,7 +70,7 @@ type
     # Wox result object
     result*: seq[Item]
 
-  Wox* = object
+  Wox* = ref object
     ## Wox object
     data*: Result
     pluginDir*: string
@@ -71,7 +79,7 @@ type
     cacheDir*: string
     settings*: JsonNode
 
-  RpcProc* = proc (params: string)
+  RpcProc* = proc (self: Wox, params: varargs[string])
 
   SortBy* = enum
     ## Sort by title or subtitle or title and subtitle
@@ -80,28 +88,49 @@ type
 # name, proc table for call proc
 var procs: Table[string, RpcProc] = initTable[string, RpcProc]()
 
-proc register*(name: string, prc: RpcProc) =
+proc register*(self: Wox, name: string, prc: RpcProc) =
   ## Register proc as name
   ##
   ## .. code-block:: Nim
-  ##    register("query", query)
+  ##    proc query(wp: Wox, params: varargs[string]) =
+  ##      # code
+  ##    wp.register("query", query)
   procs[name] = prc
 
-proc call(name, params: string) =
+proc call*(self: Wox, name: string, params: varargs[string]) =
   ## Call proc by it's name
-  procs[name](params)
+  procs[name](self, params)
 
-proc run*() =
+proc run*(self: Wox, default = "") =
   ## Parse JsonRPC from Wox and call method with params
   ##
   ## .. code-block:: Nim
-  ##    run()
-  let rpcRequest = parseJson(paramStr(1))
-  let requestMethod = rpcRequest["method"].str
-  let requestParams = rpcRequest["parameters"][0].str
-  call(requestMethod, requestParams)
+  ##    wp.run()
+  let
+    rpcRequest = if default != "": parseJson(default) else: parseJson(paramStr(1))
+    requestMethod = rpcRequest["method"].str
+    requestParams = rpcRequest["parameters"]
 
-method add*(self: var Wox,
+  var params: seq[string] = @[]
+
+  for param in requestParams:
+    # params.add(param.getStr)
+    # params.add($param)
+    case param.kind
+    of JString:
+      params.add(param.getStr)
+    of JInt:
+      params.add($param.getNum)
+    of JFloat:
+      params.add($param.getFNum)
+    of JBool:
+      params.add($param.getBVal)
+    else:
+      params.add($param)
+
+  call(self, requestMethod, params)
+
+method add*(self: Wox,
             title,
             sub = "",
             icon = "",
@@ -111,8 +140,8 @@ method add*(self: var Wox,
   ## Add item to the return list
   ##
   ## .. code-block:: Nim
-  ##      wp.add("Github", "How people build software", "Images\\gh.png",
-  ##              "openUrl", "https://github.com/", false)
+  ##    wp.add("Github", "How people build software", "Images\\gh.png",
+  ##           "openUrl", "https://github.com/", false)
   self.data.result.add(
     Item(
       Title: title,
@@ -126,7 +155,7 @@ method add*(self: var Wox,
     )
   )
 
-method insert*(self: var Wox,
+method insert*(self: Wox,
             title,
             sub = "",
             icon = "",
@@ -137,7 +166,7 @@ method insert*(self: var Wox,
   ## Insert item at pos to the return list
   ##
   ## .. code-block:: Nim
-  ##      wp.insert("Github", "How people build software", "Images\\gh.png",
+  ##    wp.insert("Github", "How people build software", "Images\\gh.png",
   ##              "openUrl", "https://github.com/", false, 0)
   self.data.result.insert(
     Item(
@@ -362,13 +391,10 @@ proc newWox*(): Wox =
   ##
   ## .. code-block:: Nim
   ##    var wp = newWox()
-  Wox(
-    data: Result(
-      result: @[]
-      ),
-    pluginDir: getAppDir(),
-    plugin: getPluginInfo(),
-    settingsDir: getSettingsDir(),
-    cacheDir: getCacheDir(),
-    settings: loadSettings()
-    )
+  new(result)
+  result.data = Result(result: @[])
+  result.pluginDir = getAppDir()
+  result.plugin = getPluginInfo()
+  result.settingsDir = getSettingsDir()
+  result.cacheDir = getCacheDir()
+  result.settings = loadSettings()
