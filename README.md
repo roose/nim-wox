@@ -17,28 +17,28 @@ Helper library for writing [Wox](http://getwox.com/) plugins in [Nim](http://nim
 ## Usage
 
 ```Nimrod
-import browsers
+import browsers, json
 import wox
 
-proc query(query: string) =
+proc query(wp: Wox, params: varargs[string]) =
   # create a global Wox object
-  var wp = newWox()
   # add an item to Wox
   wp.add("Github", "How people build software", "Images\\gh.png",
           "openUrl", "https://github.com/", false)
   # send output to Wox
   echo wp.results()
-  
-proc openUrl(url: string) =
+
+proc openUrl(wp: Wox, params: varargs[string]) =
   # open url in default browser
-  openDefaultBrowser(url)
-  
+  openDefaultBrowser(params[0])
+
 when isMainModule:
+  var wp = newWox()
   # register `query` and `openUrl` for call from Wox
-  register("query", query)
-  register("openUrl", openUrl)
+  wp.register("query", query)
+  wp.register("openUrl", openUrl)
   # run called proc
-  run()
+  wp.run()
 ```
 
 ## Documentation
