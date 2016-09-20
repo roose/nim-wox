@@ -292,7 +292,7 @@ method saveCache*(self: Wox; name: string; data: JsonNode) {.base.} =
   let cacheFile = cacheFile("$1.json" % name)
   writeFile(cacheFile, data.pretty)
 
-method sort*(self: var Wox,
+method sort*(self: Wox,
            query: string,
            sortBy = byTitleSub,
            minScore: float = 0.0,
