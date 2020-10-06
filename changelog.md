@@ -1,0 +1,20 @@
+## 1.0.0
+- **Breaking chages** replace deprecated procs and requires **nim v0.19.0**
+- Replaced deprecated procs 
+    - In `json` module
+        - `getNum` => `getInt`
+        - `getFNum` => `getFloat`
+        - `getBVal` => `getBool`
+    - In `time` module
+        - `toSeconds` => `toUnixFloat`
+    - In `sets` module
+        - `toSet` => `toHashSet`
+    - Added `unicode` module
+        - `strutils.toLower` => `unicode.toLower`
+        - `strutils.isUpper` => `unicode.isUpper`
+    - Added `unicodeplus` module
+        - `strutils.isDigit` => `unicodeplus.isDigit`
+    - Because `toLower`, `isUpper`, `isDigit` is now unicode functions, char in capitalized chars score calculation now is unicode `rune` (`for c in value.runes:`)
+    - Removed allredy covered cases from `cmpSort`, `cmpFilter`
+    - Created temp variable for `getPluginInfo` due to observable stores warning
+- Requires `nim >= 0.19.0`, `unicodeplus >= 0.8.0`
