@@ -1,5 +1,7 @@
 # nim-wox
 
+![Test nim-wox](https://github.com/roose/nim-wox/workflows/Test%20nim-wox/badge.svg?branch=master)
+
 Helper library for writing [Wox](http://getwox.com/) plugins in [Nim](http://nim-lang.org/)
 
 ## Contents
