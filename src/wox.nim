@@ -37,8 +37,10 @@
 ##    wp.settings["login"] = "john" # Error, because is string
 ##    wp.settings["login"] = newJString("john") # Right
 
-import tables, os, algorithm, strutils, sequtils, sets
+import tables, os, algorithm, strutils, sequtils, sets, unicode
 import json, marshal, tables, pegs, times
+
+from unicodeplus import isDigit
 
 type
   PluginInfo* = object
@@ -120,11 +122,11 @@ proc run*(self: Wox, default = "") =
     of JString:
       params.add(param.getStr)
     of JInt:
-      params.add($param.getNum)
+      params.add($param.getInt)
     of JFloat:
-      params.add($param.getFNum)
+      params.add($param.getFloat)
     of JBool:
-      params.add($param.getBVal)
+      params.add($param.getBool)
     else:
       params.add($param)
 
@@ -263,7 +265,7 @@ proc cacheAge(name: string): float =
   let cacheFile = cacheFile("$1.json" % name)
   if not fileExists(cacheFile):
     return 0
-  return epochTime() - toSeconds(getLastModificationTime(cacheFile))
+  return epochTime() - toUnixFloat(getLastModificationTime(cacheFile))
 
 proc isCacheOld*(name: string; maxAge: float = 0): bool =
   ## Сhecks the cache has expired or not
@@ -308,7 +310,7 @@ method sort*(self: Wox,
 
     var score = 0.0
 
-    if not (toSet(query) <= toSet(value.toLower)):
+    if not (toHashSet(query) <= toHashSet(value.toLower)):
       return score
 
     ## item starts with query
@@ -318,8 +320,8 @@ method sort*(self: Wox,
 
     # capitalized chars e.g. gh = GitHub
     var initials = ""
-    for c in value:
-      if c.isUpper or c.isDigit: initials = initials & c
+    for c in value.runes:
+      if c.isUpper or c.isDigit: initials = initials & $c
     if initials.toLower.startsWith(query):
       score = 100.0 - (initials.len / query.len)
       return score
@@ -362,8 +364,6 @@ method sort*(self: Wox,
         text = [x.SubTitle, y.SubTitle]
       of byTitleSub:
         text = [x.Title & " " & x.SubTitle, y.Title & " " & y.SubTitle]
-      else:
-        text = [x.Title & " " & x.SubTitle, y.Title & " " & y.SubTitle]
     cmp(score(text[0]), score(text[1]))
 
   proc cmpFilter(x: Item): bool =
@@ -374,8 +374,6 @@ method sort*(self: Wox,
       of bySub:
         text = x.SubTitle
       of byTitleSub:
-        text = x.Title & " " & x.SubTitle
-      else:
         text = x.Title & " " & x.SubTitle
     return score(text) > minScore
 
@@ -391,10 +389,13 @@ proc newWox*(): Wox =
   ##
   ## .. code-block:: Nim
   ##    var wp = newWox()
+  let tmpPluginInfo = getPluginInfo()
+
   new(result)
+
   result.data = Result(result: @[])
   result.pluginDir = getAppDir()
-  result.plugin = getPluginInfo()
+  result.plugin = tmpPluginInfo
   result.settingsDir = getSettingsDir()
   result.cacheDir = getCacheDir()
   result.settings = loadSettings()
