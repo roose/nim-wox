@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: jiro4989/setup-nim-action@v1.0.5
         with:
-          nim-version: 0.19.0
+          nim-version: v0.19.0
       - name: Install Packages
         run: nimble install -y
       - name: Test command
