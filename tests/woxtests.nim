@@ -46,7 +46,7 @@ suite "testing wox.nim":
     wp.settings["test_int"] = %1
     wp.saveSettings()
     check wp.settings["test"].getStr == "settings"
-    check wp.settings["test_int"].getNum == 1
+    check wp.settings["test_int"].getInt == 1
 
   test "adding item":
     wp.add("title",
