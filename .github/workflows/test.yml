@@ -9,7 +9,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: jiro4989/setup-nim-action@v1.0.5
+      - uses: jiro4989/setup-nim-action@v1
       - name: Install Packages
         run: nimble install -y
       - name: Test command
