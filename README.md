@@ -4,13 +4,17 @@
 
 Helper library for writing [Wox](http://getwox.com/) plugins in [Nim](http://nim-lang.org/)
 
+![demo](images/demo.png)
+
 ## Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Documentation](#documentation)
-- [Tests](#tests)
-- [Licensing](#licensing)
+- [nim-wox](#nim-wox)
+  - [Contents](#contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Documentation](#documentation)
+  - [Tests](#tests)
+  - [Licensing](#licensing)
 
 ## Installation
 
@@ -35,7 +39,7 @@ proc openUrl(wp: Wox, params: varargs[string]) =
   openDefaultBrowser(params[0])
 
 when isMainModule:
-  var wp = newWox()
+  var wp = newWox("http://roose.github.io/nim-wox/wox.html")
   # register `query` and `openUrl` for call from Wox
   wp.register("query", query)
   wp.register("openUrl", openUrl)
