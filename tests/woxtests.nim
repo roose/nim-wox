@@ -1,4 +1,4 @@
-import os, osproc, json, unittest, typetraits, terminal, ../src/wox
+import os, osproc, json, unittest, typetraits, ../src/wox
 
 suite "testing wox.nim":
   setup:
@@ -19,7 +19,7 @@ suite "testing wox.nim":
                 "intestinal fortitude", "the splits", "nomatch"]
 
     copyFile(pluginFile, pluginPath)
-    var wp = newWox()
+    var wp = newWox("https://github.com/roose/nim-wox")
 
     proc test(w: Wox, params: varargs[string]) = discard
 
@@ -104,3 +104,29 @@ suite "testing wox.nim":
   test "run proc":
     let rpc = """{"method": "test", "parameters": ["test param 1", "test param 2"]}"""
     wp.run(rpc)
+
+  test "all magic actions":
+    isTest = true
+    let magic = """{"method": "query", "parameters": ["plugin:"]}"""
+    wp.run(magic)
+    check len(wp.data.result) == 6
+
+  test "magic actions that don't exist":
+    isTest = true
+    let notExistsMagic = """{"method": "query", "parameters": ["plugin:abracadabra"]}"""
+    wp.run(notExistsMagic)
+    let item = wp.data.result[0]
+    check item.Title == "No Results"
+
+  test "magic actions sorting":
+    isTest = true
+    let magicDel = """{"method": "query", "parameters": ["plugin:del"]}"""
+    wp.run(magicDel)
+    check len(wp.data.result) == 2
+
+  test "help magic action":
+    isTest = true
+    let magicHelp = """{"method": "query", "parameters": ["plugin:help"]}"""
+    wp.run(magicHelp)
+    let item = wp.data.result[0]
+    check item.Title == "Open plugin help URL in browser"
