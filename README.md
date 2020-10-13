@@ -22,7 +22,7 @@ Helper library for writing [Wox](http://getwox.com/) plugins in [Nim](http://nim
 
 ## Usage
 
-```Nimrod
+```Nim
 import browsers, json
 import wox
 
@@ -46,6 +46,7 @@ when isMainModule:
   # run called proc
   wp.run()
 ```
+**Attention:** `newWox` is generating `info.png` and `delete.png` in the `Images` folder(if they don't exist).
 
 ## Documentation
 
