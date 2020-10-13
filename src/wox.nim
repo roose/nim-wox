@@ -220,7 +220,7 @@ method results*(self: Wox;): string {.base.} =
   ##    wp.results()
   # return unidecode($$self.data)
   # return convert($$self.data, "windows-1251", "UTF-8")
-  return $$self.data
+  return "\uFEFF" & $$self.data
 
 proc getPluginJson(): JsonNode =
   # load plugin.json
