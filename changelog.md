@@ -1,3 +1,6 @@
+## 1.2.1
+  - remove params from `ContextData`
+  - **Breaking chages** `ContextData` now needs to be specified on adding new item, `add(title, sub, icon, context, method, params, hide)`
 ## 1.2.0
   - Add context menu support, `ContextData` by default is `params`
 
