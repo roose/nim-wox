@@ -166,6 +166,7 @@ method add*(self: Wox,
             title,
             sub = "",
             icon = "",
+            context = "",
             `method` = "",
             params = "",
             hide: bool = true) {.base.} =
@@ -179,7 +180,7 @@ method add*(self: Wox,
       Title: title,
       SubTitle: sub,
       IcoPath: icon,
-      ContextData: params,
+      ContextData: context,
       JsonRPCAction: Action(
         `method`: `method`,
         parameters: @[params],
@@ -192,6 +193,7 @@ method insert*(self: Wox,
             title,
             sub = "",
             icon = "",
+            context = "",
             `method` = "",
             params = "",
             hide: bool = true,
@@ -206,7 +208,7 @@ method insert*(self: Wox,
       Title: title,
       SubTitle: sub,
       IcoPath: icon,
-      ContextData: params,
+      ContextData: context,
       JsonRPCAction: Action(
         `method`: `method`,
         parameters: @[params],
@@ -450,7 +452,7 @@ proc processMagic(self: Wox, query: string) =
   if id != "":
     self.sort(id, minScore = 10.0, sortBy = byTitle)
   if self.data.result.len == 0:
-    self.add("No Results", "", "Images\\info.png", "", "", true)
+    self.add("No Results", "", "Images\\info.png", "", "", "", true)
   if not isTest:
     echo self.results
 
@@ -525,4 +527,3 @@ proc newWox*(help: string = ""): Wox =
   result.addMagic("delcache", "Delete plugin's cached data", "deleteCache", deleteCache, actionNegative)
   result.addMagic("delsettings", "Delete plugin's settings", "deleteSettings", deleteSettings, actionNegative)
   result.addMagic("data", "Open plugin's dir", "openData", openData, actionPositive)
-

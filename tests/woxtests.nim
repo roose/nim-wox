@@ -52,6 +52,7 @@ suite "testing wox.nim":
     wp.add("title",
            "subtitle",
            "icon",
+           "contextData",
            "method",
            "params",
            true
@@ -61,6 +62,7 @@ suite "testing wox.nim":
     check item.Title == "title"
     check item.SubTitle == "subtitle"
     check item.IcoPath == "icon"
+    check item.ContextData == "contextData"
     check item.JsonRPCAction.`method` == "method"
     check item.JsonRPCAction.parameters[0] == "params"
     check item.JsonRPCAction.dontHideAfterAction == true
