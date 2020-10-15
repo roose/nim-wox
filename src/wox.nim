@@ -77,6 +77,7 @@ type
     Title*: string
     SubTitle*: string
     IcoPath*: string
+    ContextData*: string
     JsonRPCAction*: Action
 
   Result = object
@@ -178,6 +179,7 @@ method add*(self: Wox,
       Title: title,
       SubTitle: sub,
       IcoPath: icon,
+      ContextData: params,
       JsonRPCAction: Action(
         `method`: `method`,
         parameters: @[params],
@@ -204,6 +206,7 @@ method insert*(self: Wox,
       Title: title,
       SubTitle: sub,
       IcoPath: icon,
+      ContextData: params,
       JsonRPCAction: Action(
         `method`: `method`,
         parameters: @[params],
