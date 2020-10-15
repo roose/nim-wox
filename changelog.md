@@ -1,3 +1,7 @@
+## 1.2.0
+  - Add context menu support, `ContextData` by default is `params`
+
+  proc name for context menu is `contextmenu`, and need to register `wp.register("contextmenu", contextmenu)`
 ## 1.1.0
   - Added magic actions
     - Open plugin's cache dir
@@ -8,6 +12,7 @@
     - Open plugin help URL in browser
   - Magic actions can be run with `plugin:` keyword, eg: `plugin:help`
   - `newWox` now may have `help` url for "Open plugin help URL in browser" magic action(default is empty string)
+  - `newWox` is generating `info.png` and `delete.png` in the `Images` folder(if they don't exist).
 ## 1.0.0
 - **Breaking chages** replace deprecated procs and requires **nim v0.19.0**
 - Replaced deprecated procs
