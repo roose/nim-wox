@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.1.0"
+version       = "1.2.0"
 author        = "roose"
 description   = "Helper library for writing Wox plugins in Nim"
 license       = "MIT"

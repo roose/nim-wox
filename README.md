@@ -14,6 +14,7 @@ Helper library for writing [Wox](http://getwox.com/) plugins in [Nim](http://nim
   - [Usage](#usage)
   - [Documentation](#documentation)
   - [Tests](#tests)
+  - [Changelog](#changelog)
   - [Licensing](#licensing)
 
 ## Installation
@@ -46,6 +47,45 @@ when isMainModule:
   # run called proc
   wp.run()
 ```
+Context menu example:
+
+```Nim
+import browsers, json
+import wox
+
+proc query(wp: Wox, params: varargs[string]) =
+  # create a global Wox object
+  # add an item to Wox
+  wp.add("Github", "How people build software", "Images\\gh.png",
+          "openUrl", "https://github.com/", false)
+  # send output to Wox
+  echo wp.results()
+
+proc contextmenu(wp: Wox, params: varargs[string]) =
+  # proc for context menu action
+  wp.add("Open Github in Firefox", "", "Images\\info.png", "openFirefox", https://github.com/, false)
+  echo wp.results()
+
+proc openUrl(wp: Wox, params: varargs[string]) =
+  # open url in default browser
+  openDefaultBrowser(params[0])
+
+proc openFirefox(wp: Wox, params: varargs[string]) =
+  # open url in Firefox(for context menu)
+  openFirefoxBrowser(params[0])
+
+when isMainModule:
+  # url for help magic action
+  var wp = newWox("http://roose.github.io/nim-wox/wox.html")
+  # register `query` and `openUrl` for call from Wox
+  wp.register("query", query)
+  wp.register("openUrl", openUrl)
+  # register `contextmenu` for call from Wox context menu by pressing Shift+Enter
+  wp.register("contextmenu", contextmenu)
+  wp.register("openFirefox", openFirefox)
+  # run called proc
+  wp.run()
+```
 **Attention:** `newWox` is generating `info.png` and `delete.png` in the `Images` folder(if they don't exist).
 
 ## Documentation
@@ -55,6 +95,8 @@ when isMainModule:
 ## Tests
 
 `nimble tests`
+
+## [Changelog](changelog.md)
 
 ## Licensing
 
